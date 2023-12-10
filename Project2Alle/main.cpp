@@ -1,3 +1,6 @@
+// Hecho por: Husnain Arsha, Ivan Aguilar y Joan Aneas :)
+// v0.0.2
+
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -91,7 +94,7 @@ int menu() {
 
 	ALLEGRO_BITMAP* menu_null = al_load_bitmap("imagenes/menu_null.png");
 	ALLEGRO_BITMAP* menu_jugar = al_load_bitmap("imagenes/menu_jugar.png");
-	ALLEGRO_BITMAP* menu_contadores = al_load_bitmap("imagenes/menu_jugar.png");
+	ALLEGRO_BITMAP* menu_contadores = al_load_bitmap("imagenes/menu_contadores.png"); // La nueva opción @ivan
 	ALLEGRO_BITMAP* menu_salir = al_load_bitmap("imagenes/menu_salir.png");
 	//menu
 	int botones[] = { 0 };
@@ -113,6 +116,8 @@ int menu() {
 			al_draw_bitmap(menu_null, 0, 0, 0);
 		else if (botones[0] == 1)
 			al_draw_bitmap(menu_jugar, 0, 0, 0);
+		//else if (botones[0] == 2) // [ATENCION] Modificar este número si conviene
+		//	al_draw_bitmap(menu_contadores, 0, 0, 0); // Muestra la imagen de contadores (hover)
 		else
 			al_draw_bitmap(menu_salir, 0, 0, 0);
 
@@ -122,21 +127,25 @@ int menu() {
 			x = Evento.mouse.x;
 			y = Evento.mouse.y;
 
-			if (x >= 193 && x <= 874 && y >= 347 && y <= 462) {
+			// Ancho de un botón: 475px | Alto de un botón: 180px
+
+			if (x >= 490 && x <= 965 && y >= 80 && y <= 260) { // Coordenadas botón Jugar
 				botones[0] = 1;
 				if (Evento.mouse.button & 1)
 					jugar();
 			}
+			/*else if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
+				botones[0] = 2;
+				if (Evento.mouse.button & 1)
+					return 1;
+				}*/
+			else if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
+				botones[0] = 2;
+				if (Evento.mouse.button & 1)
+					return 1;
+			}
 			else {
-				if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
-					botones[0] = 2;
-					if (Evento.mouse.button & 1)
-						return 1;
-				}
-				else {
-					botones[0] = 0;
-				}
-
+				botones[0] = 0;
 			}
 
 
