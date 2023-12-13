@@ -139,7 +139,7 @@ int menu() {
 				if (Evento.mouse.button & 1)
 					return 1;
 				}
-			else if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
+			else if (x >= 483 && x <= 965 && y >= 495 && y <= 681) {
 				botones[0] = 2;
 				if (Evento.mouse.button & 1)
 					return 1;
