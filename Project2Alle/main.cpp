@@ -94,7 +94,7 @@ int menu() {
 
 	ALLEGRO_BITMAP* menu_null = al_load_bitmap("imagenes/menu_null.png");
 	ALLEGRO_BITMAP* menu_jugar = al_load_bitmap("imagenes/menu_jugar.png");
-	ALLEGRO_BITMAP* menu_contadores = al_load_bitmap("imagenes/menu_contadores.png"); // La nueva opci髇 @ivan
+	ALLEGRO_BITMAP* menu_contadores = al_load_bitmap("imagenes/menu_contadores.png"); // La nueva opci贸n @ivan
 	ALLEGRO_BITMAP* menu_salir = al_load_bitmap("imagenes/menu_salir.png");
 	//menu
 	int botones[] = { 0 };
@@ -116,8 +116,8 @@ int menu() {
 			al_draw_bitmap(menu_null, 0, 0, 0);
 		else if (botones[0] == 1)
 			al_draw_bitmap(menu_jugar, 0, 0, 0);
-		//else if (botones[0] == 2) // [ATENCION] Modificar este n鷐ero si conviene
-		//	al_draw_bitmap(menu_contadores, 0, 0, 0); // Muestra la imagen de contadores (hover)
+		else if (botones[0] == 3) // [ATENCION] Modificar este n煤mero si conviene
+			al_draw_bitmap(menu_contadores, -4.5, 0, 0); // Muestra la imagen de contadores (hover)
 		else
 			al_draw_bitmap(menu_salir, 0, 0, 0);
 
@@ -127,18 +127,18 @@ int menu() {
 			x = Evento.mouse.x;
 			y = Evento.mouse.y;
 
-			// Ancho de un bot髇: 475px | Alto de un bot髇: 180px
+			// Ancho de un bot贸n: 475px | Alto de un bot贸n: 180px
 
-			if (x >= 490 && x <= 965 && y >= 80 && y <= 260) { // Coordenadas bot髇 Jugar
+			if (x >= 490 && x <= 965 && y >= 80 && y <= 260) { // Coordenadas bot贸n Jugar
 				botones[0] = 1;
 				if (Evento.mouse.button & 1)
 					jugar();
 			}
-			/*else if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
-				botones[0] = 2;
+			else if (x >= 490 && x <= 965 && y >= 298 && y <= 467.8) {
+				botones[0] = 3;
 				if (Evento.mouse.button & 1)
 					return 1;
-				}*/
+				}
 			else if (x >= 193 && x <= 874 && y >= 495 && y <= 610) {
 				botones[0] = 2;
 				if (Evento.mouse.button & 1)
