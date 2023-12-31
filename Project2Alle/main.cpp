@@ -10,6 +10,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <Windows.h>
+#include <conio.h>
 
 using namespace std;
 
@@ -18,7 +19,7 @@ int jugar();
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.1.0"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.1.1"; // Tiene que ser const char* para que funcione con al_draw_text
 
 ALLEGRO_DISPLAY* ventana;
 ALLEGRO_FONT* hello_honey;
@@ -77,9 +78,9 @@ int main() {
 
 	al_start_timer(fps);
 	al_start_timer(segundoTimer);
-
+	
 	menu();
-
+	
 
 	return 0;
 }
@@ -111,36 +112,36 @@ void dibujar_tablero() {
 	// Obstáculos
 
 	// Lateral izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 60, dentroRectX + 210, dentroRectY + 120, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 60, dentroRectX + 210, dentroRectY + 120, colorPared); // 150 de ancho
 	
 	// Central superior
-	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 60, dentroRectX + 570, dentroRectY + 120, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 60, dentroRectX + 570, dentroRectY + 120, colorPared); // 300 de ancho
 
 	// Lateral derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 60, dentroRectX + 780, dentroRectY + 120, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 60, dentroRectX + 780, dentroRectY + 120, colorPared); // 150 de ancho
 
 	// Lateral L izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 180, dentroRectX + 210, dentroRectY + 240, colorPared);
-	al_draw_filled_rectangle(dentroRectX + 150, dentroRectY + 180, dentroRectX + 210, dentroRectY + 360, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 180, dentroRectX + 210, dentroRectY + 240, colorPared); // 150 de ancho
+	al_draw_filled_rectangle(dentroRectX + 150, dentroRectY + 180, dentroRectX + 210, dentroRectY + 360, colorPared); // 180 de alto
 	
 	// Inferior izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 420, dentroRectX + 210, dentroRectY + 480, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 420, dentroRectX + 210, dentroRectY + 480, colorPared); // 60 de alto
 
 	// Rectángulo central (fantasmas)
-	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 570, dentroRectY + 240, colorPared);
-	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 330, dentroRectY + 360, colorPared);
-	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 300, dentroRectX + 570, dentroRectY + 360, colorPared);
-	al_draw_filled_rectangle(dentroRectX + 510, dentroRectY + 180, dentroRectX + 570, dentroRectY + 360, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 570, dentroRectY + 240, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 330, dentroRectY + 360, colorPared); // 180 de alto
+	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 300, dentroRectX + 570, dentroRectY + 360, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 510, dentroRectY + 180, dentroRectX + 570, dentroRectY + 360, colorPared); // 60 de alto
 
 	// Lateral L derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 780, dentroRectY + 240, colorPared);
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 690, dentroRectY + 360, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 780, dentroRectY + 240, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 690, dentroRectY + 360, colorPared); // 180 de alto
 
 	// Central inferior
-	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 420, dentroRectX + 570, dentroRectY + 480, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 420, dentroRectX + 570, dentroRectY + 480, colorPared); // 60 de alto
 
 	// Inferior derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 420, dentroRectX + 780, dentroRectY + 480, colorPared);
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 420, dentroRectX + 780, dentroRectY + 480, colorPared); // 60 de alto
 
 
 
@@ -165,23 +166,83 @@ void dibujar_tablero() {
 
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
+	ALLEGRO_BITMAP* pacman = al_load_bitmap("../imagenes/sprites/pacman.png");
+
+	if (!pacman) {
+		printf("[ERROR] No se pudo cargar la imagen de pacman.\n");
+		return -1;
+	}
+	// 11 * 17 (filas * columnas)
+	// 1 es una pared, 0 es un pasillo
+	// 2 es pacman, 3 es un fantasma
+	// 4 son las pastillas, 5 es la fruta
+	int tablero[11][17] = {
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // 0
+		
+		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 1
+		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 2
+		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 3
+		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 4
+		{1, 0,0,0,1,0,1,0,0,0,1,0,1,0,0,0, 1}, // 5
+		{1, 0,0,0,1,0,1,1,1,1,1,0,1,0,0,0, 1}, // 6
+		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 7
+		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 8
+		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 9
+
+		{1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1} // 10
+	};
+
+	
 
 	if (!display) {
 		printf("[ERROR] No se pudo crear la ventana.\n");
 		return -1;
 	}
 
+	float posX = 540;
+	float posY = 400;
+	const char* tecla = "ninguna";
+	ALLEGRO_FONT* font = al_create_builtin_font();
+
 	while (true) {
 		ALLEGRO_EVENT Evento;
 		al_wait_for_event(event_queue, &Evento);
-
-		if (Evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-			break; // Salir del bucle si el usuario cierra la ventana
-		}
-
 		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
 		// Dibujar el tablero al estilo de Pac-Man
 		dibujar_tablero();
+
+		al_draw_bitmap(pacman, posX, posY, 0);
+
+		
+		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
+		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
+		if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+			switch (Evento.keyboard.keycode) {
+			case ALLEGRO_KEY_UP:
+				printf("Arriba\n");
+				tecla = "arriba";
+				posY -= 30;
+				break;
+			case ALLEGRO_KEY_LEFT:
+				printf("Izquierda\n");
+				tecla = "izquierda";
+				posX -= 30;
+				break;
+			case ALLEGRO_KEY_DOWN:
+				printf("Abajo\n");
+				tecla = "abajo";
+				posY += 30;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				printf("Derecha\n");
+				tecla = "derecha";
+				posX += 30;
+				break;
+			default:
+				break;
+			}
+		}
+
 		al_flip_display(); // Actualizar la pantalla
 	}
 	al_destroy_display(display); // Liberar recursos al salir
@@ -198,6 +259,7 @@ int menu() {
 	ALLEGRO_BITMAP* menu_jugar = al_load_bitmap("imagenes/menu_jugar.png");
 	ALLEGRO_BITMAP* menu_contadores = al_load_bitmap("imagenes/menu_contadores.png"); // La nueva opción @ivan
 	ALLEGRO_BITMAP* menu_salir = al_load_bitmap("imagenes/menu_salir.png");
+
 	//menu
 	int botones[] = { 0 };
 
