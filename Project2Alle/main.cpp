@@ -39,9 +39,8 @@ void finalizar_allegro() {
 
 
 int main() {
-
 	if (!al_init()) {
-		al_show_native_message_box(NULL, "ERROR CRITICO", "ERROR: 404", "No se pudo cargar correctamente la libreria alelgro", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		al_show_native_message_box(NULL, "ERROR CRITICO", "ERROR: 404", "No se pudo cargar correctamente la librería Allegro", NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		return -1;
 	}
 
@@ -50,8 +49,6 @@ int main() {
 	al_init_primitives_addon();
 	al_install_mouse();
 	al_init_image_addon();
-
-
 
 	ventana = al_create_display(ancho, alto);
 	hello_honey = al_load_font("fuentes/hello_honey.otf", 70, 0);
@@ -62,9 +59,6 @@ int main() {
 	al_set_window_title(ventana, "Mi Juego");
 	al_set_window_position(ventana, ancho_W / 2 - ancho / 2, alto_W / 2 - alto / 2);
 
-	//al_show_native_message_box(NULL, "ERROR CRITICO", "ERROR: 404", "No se pudo cargar correctamente la libreria alelgro", NULL, ALLEGRO_MESSAGEBOX_OK_CANCEL);
-
-	//eventos timer
 	segundoTimer = al_create_timer(1.0);
 	fps = al_create_timer(1.0 / 30);
 
@@ -73,14 +67,25 @@ int main() {
 	al_register_event_source(event_queue, al_get_timer_event_source(fps));
 	al_register_event_source(event_queue, al_get_timer_event_source(segundoTimer));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
+	al_install_keyboard();
 
-	//al_register_event_source(event_queue, al_get_mouse_event_source());
+	if (!al_install_keyboard()) {
+		fprintf(stderr, "[Error] Inicialización del teclado.\n");
+		return -1;
+	}
+
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
 
 	al_start_timer(fps);
 	al_start_timer(segundoTimer);
-	
-	menu();
-	
+
+	menu();  // Aquí llamas a tu función de menú o cualquier otra función que tenga el bucle principal (jugar).
+
+	al_destroy_display(ventana);
+	al_destroy_timer(segundoTimer);
+	al_destroy_timer(fps);
+	al_destroy_event_queue(event_queue);
+	al_destroy_font(hello_honey);
 
 	return 0;
 }
@@ -105,27 +110,27 @@ void dibujar_tablero() {
 	int dentroRectY = inicioY + 30;
 
 	al_draw_filled_rectangle(inicioX, inicioY, inicioX + 900, inicioY + 30, colorPared); // Tope superior
-	al_draw_filled_rectangle(inicioX + 870, inicioY, inicioX + 900, inicioY + 600, colorPared); // Tope derecha 
-	al_draw_filled_rectangle(inicioX, inicioY, inicioX + 30, inicioY + 600, colorPared); // Tope izquierdo
-	al_draw_filled_rectangle(inicioX, inicioY + 570, inicioX + 900, inicioY + 600, colorPared); // Tope inferior
+	al_draw_filled_rectangle(inicioX + 840, inicioY, inicioX + 870, inicioY + 600, colorPared); // Tope derecha 
+	al_draw_filled_rectangle(inicioX + 30, inicioY, inicioX + 60, inicioY + 600, colorPared); // Tope izquierdo
+	al_draw_filled_rectangle(inicioX + 30, inicioY + 570, inicioX + 870, inicioY + 600, colorPared); // Tope inferior
 	
 	// Obstáculos
 
 	// Lateral izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 60, dentroRectX + 210, dentroRectY + 120, colorPared); // 150 de ancho
+	al_draw_filled_rectangle(dentroRectX + 90, dentroRectY + 60, dentroRectX + 210, dentroRectY + 120, colorPared); // 150 de ancho
 	
 	// Central superior
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 60, dentroRectX + 570, dentroRectY + 120, colorPared); // 300 de ancho
 
 	// Lateral derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 60, dentroRectX + 780, dentroRectY + 120, colorPared); // 150 de ancho
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 60, dentroRectX + 750, dentroRectY + 120, colorPared); // 150 de ancho
 
 	// Lateral L izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 180, dentroRectX + 210, dentroRectY + 240, colorPared); // 150 de ancho
+	al_draw_filled_rectangle(dentroRectX + 90, dentroRectY + 180, dentroRectX + 210, dentroRectY + 240, colorPared); // 150 de ancho
 	al_draw_filled_rectangle(dentroRectX + 150, dentroRectY + 180, dentroRectX + 210, dentroRectY + 360, colorPared); // 180 de alto
 	
 	// Inferior izquierda
-	al_draw_filled_rectangle(dentroRectX + 60, dentroRectY + 420, dentroRectX + 210, dentroRectY + 480, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 90, dentroRectY + 420, dentroRectX + 210, dentroRectY + 480, colorPared); // 60 de alto
 
 	// Rectángulo central (fantasmas)
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 570, dentroRectY + 240, colorPared); // 60 de alto
@@ -134,14 +139,14 @@ void dibujar_tablero() {
 	al_draw_filled_rectangle(dentroRectX + 510, dentroRectY + 180, dentroRectX + 570, dentroRectY + 360, colorPared); // 60 de alto
 
 	// Lateral L derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 780, dentroRectY + 240, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 750, dentroRectY + 240, colorPared); // 60 de alto
 	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 180, dentroRectX + 690, dentroRectY + 360, colorPared); // 180 de alto
 
 	// Central inferior
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 420, dentroRectX + 570, dentroRectY + 480, colorPared); // 60 de alto
 
 	// Inferior derecha
-	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 420, dentroRectX + 780, dentroRectY + 480, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 420, dentroRectX + 750, dentroRectY + 480, colorPared); // 60 de alto
 
 
 
@@ -199,13 +204,21 @@ int jugar() {
 		return -1;
 	}
 
-	float posX = 540;
-	float posY = 400;
+	float posX = 500;
+	float posY = 490;
 	const char* tecla = "ninguna";
 	ALLEGRO_FONT* font = al_create_builtin_font();
 
+	printf("[MAIN] iniciando el juego...\n");
+
 	while (true) {
 		ALLEGRO_EVENT Evento;
+
+		if (!event_queue) {
+			printf("[ERROR] No se pudo crear la cola de eventos.\n");
+			return -1;
+		}
+
 		al_wait_for_event(event_queue, &Evento);
 		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
 		// Dibujar el tablero al estilo de Pac-Man
@@ -216,36 +229,44 @@ int jugar() {
 		
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
+		
 		if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (Evento.keyboard.keycode) {
+			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
-				printf("Arriba\n");
-				tecla = "arriba";
-				posY -= 30;
+				printf("[MAIN] Arriba\n");
+				posY -= 60;
 				break;
-			case ALLEGRO_KEY_LEFT:
-				printf("Izquierda\n");
-				tecla = "izquierda";
-				posX -= 30;
-				break;
+			case ALLEGRO_KEY_S:
 			case ALLEGRO_KEY_DOWN:
-				printf("Abajo\n");
-				tecla = "abajo";
-				posY += 30;
+				printf("[MAIN] Abajo\n");
+				posY += 60;
 				break;
+			case ALLEGRO_KEY_A:
+			case ALLEGRO_KEY_LEFT:
+				printf("[MAIN] Izquierda\n");
+				posX -= 60;
+				break;
+			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
-				printf("Derecha\n");
-				tecla = "derecha";
-				posX += 30;
+				printf("[MAIN] Derecha\n");
+				posX += 60;
 				break;
 			default:
 				break;
 			}
 		}
 
+			// Controlar límites del tablero
+			/*posX = (posX < 0) ? 0 : posX;
+			posY = (posY < 0) ? 0 : posY;
+			posX = (posX > ancho_tablero - ancho_pacman) ? (ancho_tablero - ancho_pacman) : posX;
+			posY = (posY > alto_tablero - alto_pacman) ? (alto_tablero - alto_pacman) : posY;*/
 		al_flip_display(); // Actualizar la pantalla
+		al_rest(0.05);
 	}
 	al_destroy_display(display); // Liberar recursos al salir
+	al_destroy_event_queue(event_queue);
 	return 1;
 }
 

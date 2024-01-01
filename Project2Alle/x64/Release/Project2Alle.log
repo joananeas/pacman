@@ -1,0 +1,12 @@
+﻿  main.cpp
+main.obj : error LNK2001: unresolved external symbol __imp_al_init_image_addon
+main.obj : error LNK2001: unresolved external symbol __imp_al_init_ttf_addon
+main.obj : error LNK2001: unresolved external symbol __imp_al_destroy_font
+main.obj : error LNK2001: unresolved external symbol __imp_al_init_font_addon
+main.obj : error LNK2001: unresolved external symbol __imp_al_draw_text
+main.obj : error LNK2001: unresolved external symbol __imp_al_init_primitives_addon
+main.obj : error LNK2001: unresolved external symbol __imp_al_show_native_message_box
+main.obj : error LNK2001: unresolved external symbol __imp_al_create_builtin_font
+main.obj : error LNK2001: unresolved external symbol __imp_al_draw_filled_rectangle
+main.obj : error LNK2001: unresolved external symbol __imp_al_load_font
+C:\Users\nasneas\source\repos\pacman\x64\Release\pacman.exe : fatal error LNK1120: 10 unresolved externals
