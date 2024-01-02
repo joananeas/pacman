@@ -19,7 +19,7 @@ int jugar();
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.1.1"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.1.2"; // Tiene que ser const char* para que funcione con al_draw_text
 
 ALLEGRO_DISPLAY* ventana;
 ALLEGRO_FONT* hello_honey;
@@ -194,10 +194,8 @@ int jugar() {
 		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 8
 		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 9
 
-		{1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1} // 10
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // 10
 	};
-
-	
 
 	if (!display) {
 		printf("[ERROR] No se pudo crear la ventana.\n");
@@ -210,6 +208,7 @@ int jugar() {
 	ALLEGRO_FONT* font = al_create_builtin_font();
 
 	printf("[MAIN] iniciando el juego...\n");
+	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
 
 	while (true) {
 		ALLEGRO_EVENT Evento;
@@ -229,32 +228,50 @@ int jugar() {
 		
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
-		
+
 		if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (Evento.keyboard.keycode) {
 			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
 				printf("[MAIN] Arriba\n");
-				posY -= 60;
+				direccionActual = 1;
 				break;
 			case ALLEGRO_KEY_S:
 			case ALLEGRO_KEY_DOWN:
 				printf("[MAIN] Abajo\n");
-				posY += 60;
+				direccionActual = 2;
 				break;
 			case ALLEGRO_KEY_A:
 			case ALLEGRO_KEY_LEFT:
 				printf("[MAIN] Izquierda\n");
-				posX -= 60;
+				direccionActual = 3;
 				break;
 			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
 				printf("[MAIN] Derecha\n");
-				posX += 60;
+				direccionActual = 4;
 				break;
 			default:
 				break;
 			}
+		}
+
+		// Mueve la posición en la dirección actual
+		switch (direccionActual) {
+			case 1:
+				posY -= 60;
+				break;
+			case 2:
+				posY += 60;
+				break;
+			case 3:
+				posX -= 60;
+				break;
+			case 4:
+				posX += 60;
+				break;
+			default:
+				break;
 		}
 
 			// Controlar límites del tablero
@@ -263,7 +280,7 @@ int jugar() {
 			posX = (posX > ancho_tablero - ancho_pacman) ? (ancho_tablero - ancho_pacman) : posX;
 			posY = (posY > alto_tablero - alto_pacman) ? (alto_tablero - alto_pacman) : posY;*/
 		al_flip_display(); // Actualizar la pantalla
-		al_rest(0.05);
+		al_rest(0.5);
 	}
 	al_destroy_display(display); // Liberar recursos al salir
 	al_destroy_event_queue(event_queue);
@@ -282,60 +299,60 @@ int menu() {
 	ALLEGRO_BITMAP* menu_salir = al_load_bitmap("imagenes/menu_salir.png");
 
 	//menu
-	int botones[] = { 0 };
+	int botones = 0;
 
 	while (true)
 	{
 		ALLEGRO_EVENT Evento;
 		al_wait_for_event(event_queue, &Evento);
 
-		if (Evento.type == ALLEGRO_EVENT_TIMER) {
-			if (Evento.timer.source == segundoTimer) {
-				segundos++;
-			}
-
+		if (Evento.type == ALLEGRO_EVENT_TIMER && Evento.timer.source == segundoTimer) {
+			segundos++;
 		}
+
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 
-		if (botones[0] == 0)
-			al_draw_bitmap(menu_null, 0, 0, 0);
-		else if (botones[0] == 1)
-			al_draw_bitmap(menu_jugar, 0, 0, 0);
-		else if (botones[0] == 3) // [ATENCION] Modificar este número si conviene
-			al_draw_bitmap(menu_contadores, -4.5, 0, 0); // Muestra la imagen de contadores (hover)
-		else
-			al_draw_bitmap(menu_salir, 0, 0, 0);
+		switch (botones)
+		{
+			default:
+			case 0:
+				al_draw_bitmap(menu_null, 0, 0, 0);
+				break;
+			case 1:
+				al_draw_bitmap(menu_jugar, 0, 0, 0);
+				break;
+			case 2:
+				al_draw_bitmap(menu_contadores, -4.5, 0, 0);
+				break;
+			case 3:
+				al_draw_bitmap(menu_salir, 0, 0, 0);
+				break;
+		}
+
+		// Ancho de un botón: 475px | Alto de un botón: 180px
+		int botonJugar = (x >= 490 && x <= 965 && y >= 80 && y <= 260);
+		int botonContadores = (x >= 490 && x <= 965 && y >= 298 && y <= 467.8);
+		int botonSalir = (x >= 483 && x <= 965 && y >= 495 && y <= 681);
 
 		if (Evento.type == ALLEGRO_EVENT_MOUSE_AXES || Evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
 		{
-
 			x = Evento.mouse.x;
 			y = Evento.mouse.y;
 
-			// Ancho de un botón: 475px | Alto de un botón: 180px
-
-			if (x >= 490 && x <= 965 && y >= 80 && y <= 260) { // Coordenadas botón Jugar
-				botones[0] = 1;
-				if (Evento.mouse.button & 1)
-					jugar();
+			if (botonJugar) { 
+				botones = 1; 
+				if (Evento.mouse.button & 1) jugar();
 			}
-			else if (x >= 490 && x <= 965 && y >= 298 && y <= 467.8) {
-				botones[0] = 3;
-				if (Evento.mouse.button & 1)
-					return 1;
-				}
-			else if (x >= 483 && x <= 965 && y >= 495 && y <= 681) {
-				botones[0] = 2;
-				if (Evento.mouse.button & 1)
-					return 1;
+			else if (botonContadores) { 
+				botones = 2; 
+				if (Evento.mouse.button & 1) return 1;
 			}
-			else {
-				botones[0] = 0;
+			else if (botonSalir) { 
+				botones = 3; 
+				if (Evento.mouse.button & 1) return 1;
 			}
-
-
+			else botones = 0;
 		}
-
 		al_flip_display();
 	}
 	finalizar_allegro();
