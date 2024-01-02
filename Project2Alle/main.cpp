@@ -21,13 +21,13 @@ int ancho = 1024;
 int alto = 768;
 const char* version = "v0.1.2"; // Tiene que ser const char* para que funcione con al_draw_text
 
-ALLEGRO_DISPLAY* ventana;
-ALLEGRO_FONT* hello_honey;
-ALLEGRO_TIMER* segundoTimer;
-ALLEGRO_TIMER* fps;
-ALLEGRO_EVENT_QUEUE* event_queue;
+ALLEGRO_DISPLAY* ventana = NULL;
+ALLEGRO_FONT* hello_honey = NULL;
+ALLEGRO_TIMER* segundoTimer = NULL;
+ALLEGRO_TIMER* fps = NULL;
+ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 
-void finalizar_allegro() {
+static void finalizar_allegro() {
 	// Destruir el temporizador
 	al_destroy_timer(segundoTimer);
 
@@ -48,7 +48,10 @@ int main() {
 	al_init_ttf_addon();
 	al_init_primitives_addon();
 	al_install_mouse();
+	al_install_keyboard();
 	al_init_image_addon();
+
+	//al_set_new_display_option(ALLEGRO_VSYNC, 1, ALLEGRO_SUGGEST);
 
 	ventana = al_create_display(ancho, alto);
 	hello_honey = al_load_font("fuentes/hello_honey.otf", 70, 0);
@@ -67,10 +70,9 @@ int main() {
 	al_register_event_source(event_queue, al_get_timer_event_source(fps));
 	al_register_event_source(event_queue, al_get_timer_event_source(segundoTimer));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
-	al_install_keyboard();
 
 	if (!al_install_keyboard()) {
-		fprintf(stderr, "[Error] Inicialización del teclado.\n");
+		printf("[Error] Inicialización del teclado.\n");
 		return -1;
 	}
 
@@ -79,7 +81,7 @@ int main() {
 	al_start_timer(fps);
 	al_start_timer(segundoTimer);
 
-	menu();  // Aquí llamas a tu función de menú o cualquier otra función que tenga el bucle principal (jugar).
+	menu(); 
 
 	al_destroy_display(ventana);
 	al_destroy_timer(segundoTimer);
@@ -93,6 +95,7 @@ int main() {
 void dibujar_tablero() {
 	ALLEGRO_COLOR colorPared = al_map_rgb(0, 0, 255); // Azul
 	ALLEGRO_COLOR colorPasillo = al_map_rgb(0, 0, 0); // Negro
+	ALLEGRO_COLOR colorPastilla = al_map_rgb(255, 255, 255); // Blanco
 
 	// Dimensiones de la ventana
 	int ventanaAncho = 1024;
@@ -114,6 +117,50 @@ void dibujar_tablero() {
 	al_draw_filled_rectangle(inicioX + 30, inicioY, inicioX + 60, inicioY + 600, colorPared); // Tope izquierdo
 	al_draw_filled_rectangle(inicioX + 30, inicioY + 570, inicioX + 870, inicioY + 600, colorPared); // Tope inferior
 	
+	// Pastillas horizontales
+	/*---------------------------------------------------------------------------*/
+	/**/for (int i = 90; i < 850; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + i, inicioY + 60, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 90; i < 850; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + i, inicioY + 180, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 90; i < 850; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + i, inicioY + 420, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 90; i < 850; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + i, inicioY + 540, 4, colorPastilla);
+	/**/}
+	/*---------------------------------------------------------------------------*/
+	
+	// Pastillas verticales
+	/*---------------------------------------------------------------------------*/
+	/**/for (int i = 60; i < 600; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + 90, inicioY + i, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 60; i < 600; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + 270, inicioY + i, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 60; i < 600; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + 630, inicioY + i, 4, colorPastilla);
+	/**/}
+	/**/for (int i = 60; i < 600; i += 60) {
+	/**/	al_draw_filled_circle(inicioX + 810, inicioY + i, 4, colorPastilla);
+	/**/}
+	/*---------------------------------------------------------------------------*/
+
+	// Pastillas sueltas & Frutas
+	/*---------------------------------------------------------------------------*/
+	/**/al_draw_filled_circle(inicioX + 150, inicioY + 300, 10, colorPastilla); // Fruta L izquierda
+	/**/al_draw_filled_circle(inicioX + 150, inicioY + 360, 4, colorPastilla);
+	/**/al_draw_filled_circle(inicioX + 750, inicioY + 300, 10, colorPastilla); // Fruta L derecha
+	/**/al_draw_filled_circle(inicioX + 750, inicioY + 360, 4, colorPastilla);
+	/**/al_draw_filled_circle(inicioX + 90, inicioY + 60, 10, colorPastilla); // Fruta Arriba izquierda
+	/**/al_draw_filled_circle(inicioX + 810, inicioY + 60, 10, colorPastilla); // Fruta Arriba derecha
+	/**/al_draw_filled_circle(inicioX + 810, inicioY + 540, 10, colorPastilla); // Fruta Abajo derecha
+	/**/al_draw_filled_circle(inicioX + 90, inicioY + 540, 10, colorPastilla); // Fruta Abajo izquierda
+	/*---------------------------------------------------------------------------*/
+
 	// Obstáculos
 
 	// Lateral izquierda
@@ -205,12 +252,13 @@ int jugar() {
 	float posX = 500;
 	float posY = 490;
 	const char* tecla = "ninguna";
+	bool flag = true;
 	ALLEGRO_FONT* font = al_create_builtin_font();
 
 	printf("[MAIN] iniciando el juego...\n");
 	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
 
-	while (true) {
+	while (flag) {
 		ALLEGRO_EVENT Evento;
 
 		if (!event_queue) {
@@ -228,32 +276,88 @@ int jugar() {
 		
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
-
-		if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+		//printf("[INFO] Tipo de evento: %d", Evento.type);
+		//printf("[INFO] Tecla: %s\n", al_keycode_to_name(Evento.keyboard.keycode));		
+		/*if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+			printf("[INFO] Tecla presionada.\n");
 			switch (Evento.keyboard.keycode) {
 			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
 				printf("[MAIN] Arriba\n");
 				direccionActual = 1;
+				tecla = "arriba";
 				break;
 			case ALLEGRO_KEY_S:
 			case ALLEGRO_KEY_DOWN:
 				printf("[MAIN] Abajo\n");
 				direccionActual = 2;
+				tecla = "abajo";
 				break;
 			case ALLEGRO_KEY_A:
 			case ALLEGRO_KEY_LEFT:
 				printf("[MAIN] Izquierda\n");
 				direccionActual = 3;
+				tecla = "izquierda";
 				break;
 			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
 				printf("[MAIN] Derecha\n");
 				direccionActual = 4;
+				tecla = "derecha";
+				break;
+			case ALLEGRO_KEY_ESCAPE:
+				printf("[MAIN] Saliendo del juego...\n");
+				flag = false;
 				break;
 			default:
 				break;
 			}
+		}*/
+		switch (Evento.type) {
+			printf("[INFO] Tipo de evento: %d", Evento.type);
+			case ALLEGRO_EVENT_KEY_DOWN:
+				switch (Evento.keyboard.keycode) {
+					case ALLEGRO_KEY_W:
+					case ALLEGRO_KEY_UP:
+						printf("[MAIN] Arriba\n");
+						direccionActual = 1;
+						tecla = "arriba";
+						break;
+					case ALLEGRO_KEY_S:
+					case ALLEGRO_KEY_DOWN:
+						printf("[MAIN] Abajo\n");
+						direccionActual = 2;
+						tecla = "abajo";
+						break;
+					case ALLEGRO_KEY_A:
+					case ALLEGRO_KEY_LEFT:
+						printf("[MAIN] Izquierda\n");
+						direccionActual = 3;
+						tecla = "izquierda";
+						break;
+					case ALLEGRO_KEY_D:
+					case ALLEGRO_KEY_RIGHT:
+						printf("[MAIN] Derecha\n");
+						direccionActual = 4;
+						tecla = "derecha";
+						break;
+					case ALLEGRO_KEY_ESCAPE:
+						printf("[MAIN] Saliendo del juego...\n");
+						flag = false;
+						break;
+					default:
+						break;
+				}
+				break;
+			case ALLEGRO_EVENT_KEY_UP:
+				printf("[INFO] Tecla levantada.\n");
+				break;
+			default:
+				break;
+		}	
+
+		if (Evento.type == ALLEGRO_EVENT_KEY_UP) {
+			printf("[INFO] Tecla levantada.\n");
 		}
 
 		// Mueve la posición en la dirección actual
@@ -282,6 +386,7 @@ int jugar() {
 		al_flip_display(); // Actualizar la pantalla
 		al_rest(0.5);
 	}
+	al_destroy_bitmap(pacman);
 	al_destroy_display(display); // Liberar recursos al salir
 	al_destroy_event_queue(event_queue);
 	return 1;
