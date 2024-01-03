@@ -14,18 +14,16 @@
 
 using namespace std;
 
-
-int jugar();
-int menu();
-int ancho = 1024;
-int alto = 768;
-const char* version = "v0.2.0"; // Tiene que ser const char* para que funcione con al_draw_text
-
 ALLEGRO_DISPLAY* ventana = NULL;
 ALLEGRO_FONT* hello_honey = NULL;
 ALLEGRO_TIMER* segundoTimer = NULL;
 ALLEGRO_TIMER* fps = NULL;
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
+
+int menu();
+int ancho = 1024;
+int alto = 768;
+const char* version = "v0.2.1"; // Tiene que ser const char* para que funcione con al_draw_text
 
 static void finalizar_allegro() {
 	// Destruir el temporizador
@@ -135,6 +133,7 @@ void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 
 	// Rectángulo central (fantasmas)
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 570, dentroRectY + 240, colorPared); // 60 de alto
+	al_draw_filled_rectangle(dentroRectX + 360, dentroRectY + 180, dentroRectX + 480, dentroRectY + 240, al_map_rgb(255, 255, 50));
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 180, dentroRectX + 330, dentroRectY + 360, colorPared); // 180 de alto
 	al_draw_filled_rectangle(dentroRectX + 270, dentroRectY + 300, dentroRectX + 570, dentroRectY + 360, colorPared); // 60 de alto
 	al_draw_filled_rectangle(dentroRectX + 510, dentroRectY + 180, dentroRectX + 570, dentroRectY + 360, colorPared); // 60 de alto
@@ -240,67 +239,14 @@ void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 	al_destroy_font(font);
 }
 
-/*int moverse(int tablero[11][15], int direccion) {
-	// 1 es una pared, 0 es un pasillo
-	// 2 es pacman, 3 es un fantasma
-	// 4 son las pastillas, 5 es la fruta
-	switch (direccion) {
-	case 1:
-		for (int i = 0; i < 11; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (tablero[i][j] == 2) {
-					if (i - 1 >= 0 && tablero[i - 1][j] == 0) {
-						tablero[i][j] = 0;
-						tablero[i - 1][j] = 2;
-					}
-				}
-			}
-		}
-		break;
-	case 2:
-		for (int i = 0; i < 11; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (tablero[i][j] == 2) {
-					if (i + 1 < 11 && tablero[i + 1][j] == 0) {
-						tablero[i][j] = 0;
-						tablero[i + 1][j] = 2;
-					}
-				}
-			}
-		}
-		break;
-	case 3:
-		for (int i = 0; i < 11; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (tablero[i][j] == 2) {
-					if (j - 1 >= 0 && tablero[i][j - 1] == 0) {
-						tablero[i][j] = 0;
-						tablero[i][j - 1] = 2;
-					}
-				}
-			}
-		}
-		break;
-	case 4:
-		for (int i = 0; i < 11; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (tablero[i][j] == 2) {
-					if (j + 1 < 15 && tablero[i][j + 1] == 0) {
-						tablero[i][j] = 0;
-						tablero[i][j + 1] = 2;
-					}
-				}
-			}
-		}
-		break;
-	}
-
-	return tablero[11][14];
-}*/
-
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
-	ALLEGRO_BITMAP* pacman = al_load_bitmap("../imagenes/sprites/pacman.png");
+	ALLEGRO_BITMAP* pacmanL = al_load_bitmap("../imagenes/sprites/pacman-l.png");
+	ALLEGRO_BITMAP* pacmanR = al_load_bitmap("../imagenes/sprites/pacman-r.png");
+	ALLEGRO_BITMAP* cherryL = al_load_bitmap("../imagenes/sprites/cherry-l.png");
+	ALLEGRO_BITMAP* cherryR = al_load_bitmap("../imagenes/sprites/cherry-r.png");
+	ALLEGRO_BITMAP* blinkyL = al_load_bitmap("../imagenes/sprites/blinky-l.png");
+	ALLEGRO_BITMAP* blinkyR = al_load_bitmap("../imagenes/sprites/blinky-r.png");
 	ALLEGRO_FONT* font = al_create_builtin_font();
 	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
 	const char* tecla = "ninguna";
@@ -310,6 +256,7 @@ int jugar() {
 	bool flag = true;
 	int posTab = 0;
 	int puntos = 0;
+	char orientacion = 'R';
 
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
@@ -328,10 +275,6 @@ int jugar() {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // 10
 	};
 
-	if (!pacman) {
-		printf("[ERROR] No se pudo cargar la imagen de pacman.\n");
-		return -1;
-	}	
 	if (!display) {
 		printf("[ERROR] No se pudo crear la ventana.\n");
 		return -1;
@@ -352,8 +295,11 @@ int jugar() {
 		// Dibujar el tablero al estilo de Pac-Man
 		dibujar_tablero(tablero, puntos);
 
-		al_draw_bitmap(pacman, posX, posY, 0);
+		if(orientacion == 'L') al_draw_bitmap(pacmanL, posX, posY, 0);
+		else al_draw_bitmap(pacmanR, posX, posY, 0);
 
+		al_draw_bitmap(cherryL, 440, 360, 0);
+		al_draw_bitmap(blinkyR, 560, 360, 0);
 
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
@@ -400,6 +346,7 @@ int jugar() {
 				if (tablero[i][j - 1] == 0 || tablero[i][j - 1] == 4 || tablero[i][j - 1] == 5) {
 					posTab = tablero[i][j - 1];
 					tablero[i][j - 1] = 0;
+					orientacion = 'L';
 					posX -= 60;
 					j--;
 					if (posTab == 4) puntos += 100;
@@ -415,6 +362,7 @@ int jugar() {
 				if (tablero[i][j + 1] == 0 || tablero[i][j + 1] == 4 || tablero[i][j + 1] == 5) {
 					posTab = tablero[i][j - 1];
 					tablero[i][j + 1] = 0;
+					orientacion = 'R';
 					posX += 60;
 					j++;
 					if(posTab == 4) puntos += 100;
@@ -446,7 +394,8 @@ int jugar() {
 		//posX += mov * velocidad * deltaTime;
 		//double deltaTime = al_get_timer_count(fps);
 	}
-	al_destroy_bitmap(pacman);
+	al_destroy_bitmap(pacmanR);
+	al_destroy_bitmap(pacmanL);
 	al_destroy_display(display); // Liberar recursos al salir
 	al_destroy_event_queue(event_queue);
 	return 1;
