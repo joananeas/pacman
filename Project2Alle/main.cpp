@@ -19,7 +19,7 @@ int jugar();
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.1.2"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.1.3"; // Tiene que ser const char* para que funcione con al_draw_text
 
 ALLEGRO_DISPLAY* ventana = NULL;
 ALLEGRO_FONT* hello_honey = NULL;
@@ -63,18 +63,16 @@ int main() {
 	al_set_window_position(ventana, ancho_W / 2 - ancho / 2, alto_W / 2 - alto / 2);
 
 	segundoTimer = al_create_timer(1.0);
-	fps = al_create_timer(1.0 / 30);
+	fps = al_create_timer(1.0 / 60);
 
 	event_queue = al_create_event_queue();
 
 	al_register_event_source(event_queue, al_get_timer_event_source(fps));
 	al_register_event_source(event_queue, al_get_timer_event_source(segundoTimer));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
-
-	if (!al_install_keyboard()) {
-		printf("[Error] Inicialización del teclado.\n");
-		return -1;
-	}
+	
+	bool kboard = al_is_keyboard_installed();
+	printf("[INFO] Estado del teclado: %d\n", kboard);
 
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 
@@ -216,6 +214,64 @@ void dibujar_tablero() {
 	al_destroy_font(font);
 }
 
+int moverse(int tablero[11][15], int direccion) {
+	// 1 es una pared, 0 es un pasillo
+	// 2 es pacman, 3 es un fantasma
+	// 4 son las pastillas, 5 es la fruta
+	switch (direccion) {
+	case 1:
+		for (int i = 0; i < 11; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (tablero[i][j] == 2) {
+					if (i - 1 >= 0 && tablero[i - 1][j] == 0) {
+						tablero[i][j] = 0;
+						tablero[i - 1][j] = 2;
+					}
+				}
+			}
+		}
+		break;
+	case 2:
+		for (int i = 0; i < 11; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (tablero[i][j] == 2) {
+					if (i + 1 < 11 && tablero[i + 1][j] == 0) {
+						tablero[i][j] = 0;
+						tablero[i + 1][j] = 2;
+					}
+				}
+			}
+		}
+		break;
+	case 3:
+		for (int i = 0; i < 11; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (tablero[i][j] == 2) {
+					if (j - 1 >= 0 && tablero[i][j - 1] == 0) {
+						tablero[i][j] = 0;
+						tablero[i][j - 1] = 2;
+					}
+				}
+			}
+		}
+		break;
+	case 4:
+		for (int i = 0; i < 11; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (tablero[i][j] == 2) {
+					if (j + 1 < 15 && tablero[i][j + 1] == 0) {
+						tablero[i][j] = 0;
+						tablero[i][j + 1] = 2;
+					}
+				}
+			}
+		}
+		break;
+	}
+
+	return tablero[11][14];
+}
+
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
 	ALLEGRO_BITMAP* pacman = al_load_bitmap("../imagenes/sprites/pacman.png");
@@ -228,20 +284,18 @@ int jugar() {
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
 	// 4 son las pastillas, 5 es la fruta
-	int tablero[11][17] = {
-		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // 0
-		
-		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 1
-		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 2
-		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 3
-		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 4
-		{1, 0,0,0,1,0,1,0,0,0,1,0,1,0,0,0, 1}, // 5
-		{1, 0,0,0,1,0,1,1,1,1,1,0,1,0,0,0, 1}, // 6
-		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 7
-		{1, 0,1,1,1,0,1,1,1,1,1,0,1,1,1,0, 1}, // 8
-		{1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 1}, // 9
-
-		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // 10
+	int tablero[11][15] = {
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // 0
+		{1,5,4,4,4,4,4,4,4,4,4,4,4,5,1}, // 1
+		{1,4,1,1,4,1,1,1,1,1,4,1,1,4,1}, // 2
+		{1,4,4,4,4,4,4,4,4,4,4,4,4,4,1}, // 3
+		{1,4,1,1,4,1,1,1,1,1,4,1,1,4,1}, // 4
+		{1,4,5,1,4,1,3,0,3,1,4,1,5,4,1}, // 5
+		{1,4,4,1,4,1,1,1,1,1,4,1,4,4,1}, // 6
+		{1,4,4,4,4,4,4,4,4,4,4,4,4,4,1}, // 7
+		{1,4,1,1,4,1,1,1,1,1,4,1,1,4,1}, // 8
+		{1,5,4,4,4,4,4,4,4,4,4,4,4,5,1}, // 9
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // 10
 	};
 
 	if (!display) {
@@ -251,6 +305,9 @@ int jugar() {
 
 	float posX = 500;
 	float posY = 490;
+	int i = 7, j = 7;
+	printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+
 	const char* tecla = "ninguna";
 	bool flag = true;
 	ALLEGRO_FONT* font = al_create_builtin_font();
@@ -260,49 +317,74 @@ int jugar() {
 
 	while (flag) {
 		ALLEGRO_EVENT Evento;
-
+		al_wait_for_event(event_queue, &Evento);
 		if (!event_queue) {
 			printf("[ERROR] No se pudo crear la cola de eventos.\n");
 			return -1;
 		}
 
-		al_wait_for_event(event_queue, &Evento);
 		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
 		// Dibujar el tablero al estilo de Pac-Man
 		dibujar_tablero();
 
 		al_draw_bitmap(pacman, posX, posY, 0);
 
-		
+
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
-		//printf("[INFO] Tipo de evento: %d", Evento.type);
-		//printf("[INFO] Tecla: %s\n", al_keycode_to_name(Evento.keyboard.keycode));		
-		/*if (Evento.type == ALLEGRO_EVENT_KEY_DOWN) {
-			printf("[INFO] Tecla presionada.\n");
+
+		float velocidad = 2.0;
+		//printf("[INFO] tick.\t");
+		switch (Evento.type) {
+			printf("[INFO] Tipo de evento: %d", Evento.type);
+		case ALLEGRO_EVENT_KEY_DOWN:
 			switch (Evento.keyboard.keycode) {
 			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
 				printf("[MAIN] Arriba\n");
-				direccionActual = 1;
+				if (tablero[i - 1][j] == 0 || tablero[i - 1][j] == 4 || tablero[i - 1][j] == 5) {
+					printf("[INFO] Moviendo hacia la izquierda.\n");
+					posY -= 60;
+					tablero[i - 1][j] = 0;
+					i--;
+					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+				}
 				tecla = "arriba";
 				break;
 			case ALLEGRO_KEY_S:
 			case ALLEGRO_KEY_DOWN:
 				printf("[MAIN] Abajo\n");
-				direccionActual = 2;
+				if (tablero[i + 1][j] == 0 || tablero[i + 1][j] == 4 || tablero[i + 1][j] == 5) {
+					printf("[INFO] Moviendo hacia la derecha.\n");
+					posY += 60;
+					tablero[i + 1][j] = 0;
+					i++;
+					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+				}
 				tecla = "abajo";
 				break;
 			case ALLEGRO_KEY_A:
 			case ALLEGRO_KEY_LEFT:
 				printf("[MAIN] Izquierda\n");
-				direccionActual = 3;
+				if (tablero[i][j - 1] == 0 || tablero[i][j - 1] == 4 || tablero[i][j - 1] == 5) {
+					printf("[INFO] Moviendo hacia arriba.\n");
+					posX -= 60;
+					tablero[i][j - 1] = 0;
+					j--;
+					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+				}
 				tecla = "izquierda";
 				break;
 			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
 				printf("[MAIN] Derecha\n");
-				direccionActual = 4;
+				if (tablero[i][j + 1] == 0 || tablero[i][j + 1] == 4 || tablero[i][j + 1] == 5) {
+					printf("[INFO] Moviendo hacia abajo.\n");
+					posX += 60;
+					tablero[i][j + 1] = 0;
+					j++;
+					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+				}
 				tecla = "derecha";
 				break;
 			case ALLEGRO_KEY_ESCAPE:
@@ -312,79 +394,20 @@ int jugar() {
 			default:
 				break;
 			}
-		}*/
-		switch (Evento.type) {
-			printf("[INFO] Tipo de evento: %d", Evento.type);
-			case ALLEGRO_EVENT_KEY_DOWN:
-				switch (Evento.keyboard.keycode) {
-					case ALLEGRO_KEY_W:
-					case ALLEGRO_KEY_UP:
-						printf("[MAIN] Arriba\n");
-						direccionActual = 1;
-						tecla = "arriba";
-						break;
-					case ALLEGRO_KEY_S:
-					case ALLEGRO_KEY_DOWN:
-						printf("[MAIN] Abajo\n");
-						direccionActual = 2;
-						tecla = "abajo";
-						break;
-					case ALLEGRO_KEY_A:
-					case ALLEGRO_KEY_LEFT:
-						printf("[MAIN] Izquierda\n");
-						direccionActual = 3;
-						tecla = "izquierda";
-						break;
-					case ALLEGRO_KEY_D:
-					case ALLEGRO_KEY_RIGHT:
-						printf("[MAIN] Derecha\n");
-						direccionActual = 4;
-						tecla = "derecha";
-						break;
-					case ALLEGRO_KEY_ESCAPE:
-						printf("[MAIN] Saliendo del juego...\n");
-						flag = false;
-						break;
-					default:
-						break;
-				}
-				break;
-			case ALLEGRO_EVENT_KEY_UP:
-				printf("[INFO] Tecla levantada.\n");
-				break;
-			default:
-				break;
-		}	
-
-		if (Evento.type == ALLEGRO_EVENT_KEY_UP) {
-			printf("[INFO] Tecla levantada.\n");
+			break;
+		case ALLEGRO_EVENT_KEY_UP:
+			break;
+		default:
+			break;
 		}
 
-		// Mueve la posición en la dirección actual
-		switch (direccionActual) {
-			case 1:
-				posY -= 60;
-				break;
-			case 2:
-				posY += 60;
-				break;
-			case 3:
-				posX -= 60;
-				break;
-			case 4:
-				posX += 60;
-				break;
-			default:
-				break;
-		}
-
-			// Controlar límites del tablero
-			/*posX = (posX < 0) ? 0 : posX;
-			posY = (posY < 0) ? 0 : posY;
-			posX = (posX > ancho_tablero - ancho_pacman) ? (ancho_tablero - ancho_pacman) : posX;
-			posY = (posY > alto_tablero - alto_pacman) ? (alto_tablero - alto_pacman) : posY;*/
+		const float distanciaObjetivo = 60.0; // ajusta esto a la distancia deseada en píxeles
+		int valTablero = tablero[i][j];
+		
 		al_flip_display(); // Actualizar la pantalla
-		al_rest(0.5);
+
+		//posX += mov * velocidad * deltaTime;
+		double deltaTime = al_get_timer_count(fps);
 	}
 	al_destroy_bitmap(pacman);
 	al_destroy_display(display); // Liberar recursos al salir

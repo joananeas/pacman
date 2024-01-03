@@ -1,0 +1,13 @@
+﻿  main.cpp
+main.obj : error LNK2019: unresolved external symbol __imp__al_show_native_message_box referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__al_load_font referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__al_create_builtin_font referenced in function "void __cdecl dibujar_tablero(void)" (?dibujar_tablero@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp__al_draw_text referenced in function "void __cdecl dibujar_tablero(void)" (?dibujar_tablero@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp__al_destroy_font referenced in function "void __cdecl dibujar_tablero(void)" (?dibujar_tablero@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp__al_init_font_addon referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__al_init_ttf_addon referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__al_init_primitives_addon referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__al_draw_filled_rectangle referenced in function "void __cdecl dibujar_tablero(void)" (?dibujar_tablero@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp__al_draw_filled_circle referenced in function "void __cdecl dibujar_tablero(void)" (?dibujar_tablero@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp__al_init_image_addon referenced in function _main
+C:\Users\nasneas\source\repos\pacman\Debug\pacman.exe : fatal error LNK1120: 11 unresolved externals

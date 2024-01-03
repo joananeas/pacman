@@ -1,4 +1,109 @@
-﻿main.obj : error LNK2001: unresolved external symbol __imp_al_init_image_addon
+﻿  Searching libraries
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\kernel32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\user32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\gdi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\winspool.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\comdlg32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\advapi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\shell32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\ole32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\oleaut32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\uuid.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbc32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbccp32.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\msvcprt.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\MSVCRT.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\OLDNAMES.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\vcruntime.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\ucrt\x64\ucrt.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\kernel32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\user32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\gdi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\winspool.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\comdlg32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\advapi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\shell32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\ole32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\oleaut32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\uuid.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbc32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbccp32.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\msvcprt.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\MSVCRT.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\OLDNAMES.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\vcruntime.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\ucrt\x64\ucrt.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+  Finished searching libraries
+  Searching libraries
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\kernel32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\user32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\gdi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\winspool.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\comdlg32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\advapi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\shell32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\ole32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\oleaut32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\uuid.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbc32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbccp32.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\msvcprt.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\MSVCRT.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\OLDNAMES.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\vcruntime.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\ucrt\x64\ucrt.lib:
+  Finished searching libraries
+  Searching libraries
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\kernel32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\user32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\gdi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\winspool.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\comdlg32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\advapi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\shell32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\ole32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\oleaut32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\uuid.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbc32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbccp32.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\msvcprt.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\MSVCRT.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\OLDNAMES.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\vcruntime.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\ucrt\x64\ucrt.lib:
+  Finished searching libraries
+  Searching libraries
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro.lib:
+      Searching C:\Users\nasneas\source\repos\pacman\packages\Allegro.5.2.9\build\native\v143\x64\lib\allegro_main.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\kernel32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\user32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\gdi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\winspool.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\comdlg32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\advapi32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\shell32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\ole32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\oleaut32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\uuid.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbc32.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\um\x64\odbccp32.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\msvcprt.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\MSVCRT.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\OLDNAMES.lib:
+      Searching C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\lib\x64\vcruntime.lib:
+      Searching C:\Program Files (x86)\Windows Kits\10\lib\10.0.22621.0\ucrt\x64\ucrt.lib:
+  Finished searching libraries
+main.obj : error LNK2001: unresolved external symbol __imp_al_init_image_addon
 main.obj : error LNK2001: unresolved external symbol __imp_al_draw_filled_circle
 main.obj : error LNK2001: unresolved external symbol __imp_al_init_ttf_addon
 main.obj : error LNK2001: unresolved external symbol __imp_al_destroy_font
