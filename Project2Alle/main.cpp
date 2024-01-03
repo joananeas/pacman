@@ -19,7 +19,7 @@ int jugar();
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.1.3"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.2.0"; // Tiene que ser const char* para que funcione con al_draw_text
 
 ALLEGRO_DISPLAY* ventana = NULL;
 ALLEGRO_FONT* hello_honey = NULL;
@@ -90,7 +90,7 @@ int main() {
 	return 0;
 }
 
-void dibujar_tablero() {
+void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 	ALLEGRO_COLOR colorPared = al_map_rgb(0, 0, 255); // Azul
 	ALLEGRO_COLOR colorPasillo = al_map_rgb(0, 0, 0); // Negro
 	ALLEGRO_COLOR colorPastilla = al_map_rgb(255, 255, 255); // Blanco
@@ -115,50 +115,6 @@ void dibujar_tablero() {
 	al_draw_filled_rectangle(inicioX + 30, inicioY, inicioX + 60, inicioY + 600, colorPared); // Tope izquierdo
 	al_draw_filled_rectangle(inicioX + 30, inicioY + 570, inicioX + 870, inicioY + 600, colorPared); // Tope inferior
 	
-	// Pastillas horizontales
-	/*---------------------------------------------------------------------------*/
-	/**/for (int i = 90; i < 850; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + i, inicioY + 60, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 90; i < 850; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + i, inicioY + 180, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 90; i < 850; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + i, inicioY + 420, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 90; i < 850; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + i, inicioY + 540, 4, colorPastilla);
-	/**/}
-	/*---------------------------------------------------------------------------*/
-	
-	// Pastillas verticales
-	/*---------------------------------------------------------------------------*/
-	/**/for (int i = 60; i < 600; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + 90, inicioY + i, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 60; i < 600; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + 270, inicioY + i, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 60; i < 600; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + 630, inicioY + i, 4, colorPastilla);
-	/**/}
-	/**/for (int i = 60; i < 600; i += 60) {
-	/**/	al_draw_filled_circle(inicioX + 810, inicioY + i, 4, colorPastilla);
-	/**/}
-	/*---------------------------------------------------------------------------*/
-
-	// Pastillas sueltas & Frutas
-	/*---------------------------------------------------------------------------*/
-	/**/al_draw_filled_circle(inicioX + 150, inicioY + 300, 10, colorPastilla); // Fruta L izquierda
-	/**/al_draw_filled_circle(inicioX + 150, inicioY + 360, 4, colorPastilla);
-	/**/al_draw_filled_circle(inicioX + 750, inicioY + 300, 10, colorPastilla); // Fruta L derecha
-	/**/al_draw_filled_circle(inicioX + 750, inicioY + 360, 4, colorPastilla);
-	/**/al_draw_filled_circle(inicioX + 90, inicioY + 60, 10, colorPastilla); // Fruta Arriba izquierda
-	/**/al_draw_filled_circle(inicioX + 810, inicioY + 60, 10, colorPastilla); // Fruta Arriba derecha
-	/**/al_draw_filled_circle(inicioX + 810, inicioY + 540, 10, colorPastilla); // Fruta Abajo derecha
-	/**/al_draw_filled_circle(inicioX + 90, inicioY + 540, 10, colorPastilla); // Fruta Abajo izquierda
-	/*---------------------------------------------------------------------------*/
-
 	// Obstáculos
 
 	// Lateral izquierda
@@ -193,7 +149,73 @@ void dibujar_tablero() {
 	// Inferior derecha
 	al_draw_filled_rectangle(dentroRectX + 630, dentroRectY + 420, dentroRectX + 750, dentroRectY + 480, colorPared); // 60 de alto
 
+	// Pastillas horizontales
+	/*---------------------------------------------------------------------------*/
+	for (int i = 90; i < 850; i += 60) {
+		if (frutasPastillasRecogidas[1][i / 60] == 4) {
+			al_draw_filled_circle(inicioX + i, inicioY + 60, 4, colorPastilla);
+		}
+	}
+	for (int i = 90; i < 850; i += 60) {
+		if (frutasPastillasRecogidas[3][i / 60] == 4) {
+			al_draw_filled_circle(inicioX + i, inicioY + 180, 4, colorPastilla);
+		}
+	}
+	for (int i = 90; i < 850; i += 60) {
+		if (frutasPastillasRecogidas[7][i / 60] == 4) {
+			al_draw_filled_circle(inicioX + i, inicioY + 420, 4, colorPastilla);
+		}
+	}
+	for (int i = 90; i < 850; i += 60) {
+		if (frutasPastillasRecogidas[9][i / 60] == 4) {
+			al_draw_filled_circle(inicioX + i, inicioY + 540, 4, colorPastilla);
+		}
+	}
+	/*---------------------------------------------------------------------------*/
 
+	// Pastillas verticales
+	/*---------------------------------------------------------------------------*/
+	for (int i = 60; i < 600; i += 60) {
+		if (frutasPastillasRecogidas[i / 60][1] == 4) {
+			al_draw_filled_circle(inicioX + 90, inicioY + i, 4, colorPastilla);
+		}
+	}
+	for (int i = 60; i < 600; i += 60) {
+		if (frutasPastillasRecogidas[i / 60][4] == 4) {
+			al_draw_filled_circle(inicioX + 270, inicioY + i, 4, colorPastilla);
+		}
+	}
+	for (int i = 60; i < 600; i += 60) {
+		if (frutasPastillasRecogidas[i / 60][10] == 4) {
+			al_draw_filled_circle(inicioX + 630, inicioY + i, 4, colorPastilla);
+		}
+	}
+	for (int i = 60; i < 600; i += 60) {
+		if (frutasPastillasRecogidas[i / 60][13] == 4) {
+			al_draw_filled_circle(inicioX + 810, inicioY + i, 4, colorPastilla);
+		}
+	}
+	/*---------------------------------------------------------------------------*/
+
+	// Pastillas sueltas & Frutas
+	/*---------------------------------------------------------------------------*/
+	/*if (frutasPastillasRecogidas[1][1] == 4) {
+		al_draw_filled_circle(inicioX + 150, inicioY + 360, 4, colorPastilla);
+	}*/
+	if(frutasPastillasRecogidas[6][12] == 4){
+		al_draw_filled_circle(inicioX + 750, inicioY + 360, 4, colorPastilla);
+	}
+	if (frutasPastillasRecogidas[6][2] == 4) {
+		al_draw_filled_circle(inicioX + 150, inicioY + 360, 4, colorPastilla);
+	}
+
+	al_draw_filled_circle(inicioX + 150, inicioY + 300, 10, colorPastilla); // Fruta L izquierda
+	al_draw_filled_circle(inicioX + 750, inicioY + 300, 10, colorPastilla); // Fruta L derecha
+	al_draw_filled_circle(inicioX + 90, inicioY + 60, 10, colorPastilla); // Fruta Arriba izquierda
+	al_draw_filled_circle(inicioX + 810, inicioY + 60, 10, colorPastilla); // Fruta Arriba derecha
+	al_draw_filled_circle(inicioX + 810, inicioY + 540, 10, colorPastilla); // Fruta Abajo derecha
+	al_draw_filled_circle(inicioX + 90, inicioY + 540, 10, colorPastilla); // Fruta Abajo izquierda
+	/*---------------------------------------------------------------------------*/
 
 	float grosor = 30;
 	// Dibujar texto sobre el tablero
@@ -203,10 +225,14 @@ void dibujar_tablero() {
 		return;
 	}
 
-	float puntos = 100;
+	const char * puntos_s;
+	char buffer[20];
+	sprintf_s(buffer, "%d", puntos);
+	puntos_s = buffer;
 
 	/*--------------------------------------------------------------------------------------------------------*/
-	/**/al_draw_text(font, al_map_rgb(255, 255, 255), inicioX + 42, 50, ALLEGRO_ALIGN_CENTER, "Puntos: 10");/**/
+	/**/al_draw_text(font, al_map_rgb(255, 255, 255), inicioX + 42, 50, ALLEGRO_ALIGN_CENTER, "Puntos: ");/**/
+	/**/al_draw_text(font, al_map_rgb(255, 255, 255), inicioX + 92, 50, ALLEGRO_ALIGN_CENTER, puntos_s);/**/
 	/**/al_draw_text(font, al_map_rgb(255, 255, 255), 512, 50, ALLEGRO_ALIGN_CENTER, "Vidas: 3");/*-----------*/
 	/**/al_draw_text(font, al_map_rgb(255, 255, 255), inicioX + 875, 50, ALLEGRO_ALIGN_CENTER, version);/*----*/
 	/*--------------------------------------------------------------------------------------------------------*/
@@ -214,7 +240,7 @@ void dibujar_tablero() {
 	al_destroy_font(font);
 }
 
-int moverse(int tablero[11][15], int direccion) {
+/*int moverse(int tablero[11][15], int direccion) {
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
 	// 4 son las pastillas, 5 es la fruta
@@ -270,17 +296,21 @@ int moverse(int tablero[11][15], int direccion) {
 	}
 
 	return tablero[11][14];
-}
+}*/
 
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
 	ALLEGRO_BITMAP* pacman = al_load_bitmap("../imagenes/sprites/pacman.png");
+	ALLEGRO_FONT* font = al_create_builtin_font();
+	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
+	const char* tecla = "ninguna";
+	float posX = 500;
+	float posY = 490;
+	int i = 7, j = 7;
+	bool flag = true;
+	int posTab = 0;
+	int puntos = 0;
 
-	if (!pacman) {
-		printf("[ERROR] No se pudo cargar la imagen de pacman.\n");
-		return -1;
-	}
-	// 11 * 17 (filas * columnas)
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
 	// 4 son las pastillas, 5 es la fruta
@@ -298,22 +328,17 @@ int jugar() {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} // 10
 	};
 
+	if (!pacman) {
+		printf("[ERROR] No se pudo cargar la imagen de pacman.\n");
+		return -1;
+	}	
 	if (!display) {
 		printf("[ERROR] No se pudo crear la ventana.\n");
 		return -1;
 	}
-
-	float posX = 500;
-	float posY = 490;
-	int i = 7, j = 7;
+	
 	printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
-
-	const char* tecla = "ninguna";
-	bool flag = true;
-	ALLEGRO_FONT* font = al_create_builtin_font();
-
 	printf("[MAIN] iniciando el juego...\n");
-	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
 
 	while (flag) {
 		ALLEGRO_EVENT Evento;
@@ -325,7 +350,7 @@ int jugar() {
 
 		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
 		// Dibujar el tablero al estilo de Pac-Man
-		dibujar_tablero();
+		dibujar_tablero(tablero, puntos);
 
 		al_draw_bitmap(pacman, posX, posY, 0);
 
@@ -334,7 +359,7 @@ int jugar() {
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
 
 		float velocidad = 2.0;
-		//printf("[INFO] tick.\t");
+
 		switch (Evento.type) {
 			printf("[INFO] Tipo de evento: %d", Evento.type);
 		case ALLEGRO_EVENT_KEY_DOWN:
@@ -342,12 +367,15 @@ int jugar() {
 			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
 				printf("[MAIN] Arriba\n");
-				if (tablero[i - 1][j] == 0 || tablero[i - 1][j] == 4 || tablero[i - 1][j] == 5) {
-					printf("[INFO] Moviendo hacia la izquierda.\n");
-					posY -= 60;
+				if (tablero[i - 1][j] == 0 || tablero[i - 1][j] == 4 || tablero[i - 1][j] == 5) {			
+					posTab = tablero[i - 1][j];
 					tablero[i - 1][j] = 0;
+					posY -= 60;
 					i--;
+					if (posTab == 4) puntos += 100;
+					else if (posTab == 5) puntos += 500;
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+					printf("[INFO] Moviendo hacia la izquierda.\n");
 				}
 				tecla = "arriba";
 				break;
@@ -355,11 +383,14 @@ int jugar() {
 			case ALLEGRO_KEY_DOWN:
 				printf("[MAIN] Abajo\n");
 				if (tablero[i + 1][j] == 0 || tablero[i + 1][j] == 4 || tablero[i + 1][j] == 5) {
-					printf("[INFO] Moviendo hacia la derecha.\n");
-					posY += 60;
+					posTab = tablero[i + 1][j];
 					tablero[i + 1][j] = 0;
+					posY += 60;
 					i++;
+					if (posTab == 4) puntos += 100;
+					else if (posTab == 5) puntos += 500;
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+					printf("[INFO] Moviendo hacia la derecha.\n");
 				}
 				tecla = "abajo";
 				break;
@@ -367,11 +398,14 @@ int jugar() {
 			case ALLEGRO_KEY_LEFT:
 				printf("[MAIN] Izquierda\n");
 				if (tablero[i][j - 1] == 0 || tablero[i][j - 1] == 4 || tablero[i][j - 1] == 5) {
-					printf("[INFO] Moviendo hacia arriba.\n");
-					posX -= 60;
+					posTab = tablero[i][j - 1];
 					tablero[i][j - 1] = 0;
+					posX -= 60;
 					j--;
+					if (posTab == 4) puntos += 100;
+					else if (posTab == 5) puntos += 500;
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+					printf("[INFO] Moviendo hacia arriba.\n");
 				}
 				tecla = "izquierda";
 				break;
@@ -379,11 +413,14 @@ int jugar() {
 			case ALLEGRO_KEY_RIGHT:
 				printf("[MAIN] Derecha\n");
 				if (tablero[i][j + 1] == 0 || tablero[i][j + 1] == 4 || tablero[i][j + 1] == 5) {
-					printf("[INFO] Moviendo hacia abajo.\n");
-					posX += 60;
+					posTab = tablero[i][j - 1];
 					tablero[i][j + 1] = 0;
+					posX += 60;
 					j++;
+					if(posTab == 4) puntos += 100;
+					else if (posTab == 5) puntos += 500;
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
+					printf("[INFO] Moviendo hacia abajo.\n");
 				}
 				tecla = "derecha";
 				break;
@@ -407,7 +444,7 @@ int jugar() {
 		al_flip_display(); // Actualizar la pantalla
 
 		//posX += mov * velocidad * deltaTime;
-		double deltaTime = al_get_timer_count(fps);
+		//double deltaTime = al_get_timer_count(fps);
 	}
 	al_destroy_bitmap(pacman);
 	al_destroy_display(display); // Liberar recursos al salir
