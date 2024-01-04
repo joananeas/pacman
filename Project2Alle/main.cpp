@@ -11,6 +11,7 @@
 #include <allegro5/allegro_image.h>
 #include <Windows.h>
 #include <conio.h>
+#include <vector>
 
 using namespace std;
 
@@ -19,11 +20,12 @@ ALLEGRO_FONT* hello_honey = NULL;
 ALLEGRO_TIMER* segundoTimer = NULL;
 ALLEGRO_TIMER* fps = NULL;
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
+ALLEGRO_FONT* font = NULL;
 
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.2.1"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.2.2"; // Tiene que ser const char* para que funcione con al_draw_text
 
 static void finalizar_allegro() {
 	// Destruir el temporizador
@@ -92,7 +94,7 @@ void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 	ALLEGRO_COLOR colorPared = al_map_rgb(0, 0, 255); // Azul
 	ALLEGRO_COLOR colorPasillo = al_map_rgb(0, 0, 0); // Negro
 	ALLEGRO_COLOR colorPastilla = al_map_rgb(255, 255, 255); // Blanco
-
+	font = al_create_builtin_font();
 	// Dimensiones de la ventana
 	int ventanaAncho = 1024;
 	int ventanaAlto = 768;
@@ -218,7 +220,6 @@ void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 
 	float grosor = 30;
 	// Dibujar texto sobre el tablero
-	ALLEGRO_FONT* font = al_create_builtin_font();
 	if (!font) {
 		fprintf(stderr, "Error al cargar la fuente incorporada.\n");
 		return;
@@ -239,6 +240,69 @@ void dibujar_tablero(int frutasPastillasRecogidas[11][15], int puntos) {
 	al_destroy_font(font);
 }
 
+string obtenerHoraActual() {
+	time_t tiempoActual;
+	time(&tiempoActual);
+	struct tm tiempoLocal;
+	localtime_s(&tiempoLocal, &tiempoActual);
+
+	// Muestra la hora actual
+	printf("[MAIN] Inicio de partida: %02d:%02d:%02d\n", tiempoLocal.tm_hour, tiempoLocal.tm_min, tiempoLocal.tm_sec);
+
+	return to_string(tiempoLocal.tm_hour) + ":" + to_string(tiempoLocal.tm_min) + ":" + to_string(tiempoLocal.tm_sec);
+}
+
+void guardarFichero(string hora, int puntos) {
+	FILE* fichero;
+
+	if (fopen_s(&fichero, "../contadores.txt", "a") != 0) {
+		printf("[ERROR] No se pudo abrir el fichero para añadir datos.\n");
+		return;
+	}
+	else {
+		fprintf(fichero, "\n");
+		fprintf(fichero, "%s\t", hora.c_str());
+		fprintf(fichero, "%d\t", puntos);
+		fprintf(fichero, "%s\t", "true");
+	}
+
+	fclose(fichero);
+}
+
+string leerFichero() {
+	FILE* fichero;
+	if (fopen_s(&fichero, "../contadores.txt", "r") != 0) {
+		printf("[ERROR] No se pudo abrir el fichero para leer datos.\n");
+		return {};  // Devuelve un vector vacío en caso de error
+	}
+
+	string ficheroString;
+	char buffer[100];
+	while (fgets(buffer, 100, fichero) != NULL) {
+		ficheroString += buffer;
+	}
+
+	fclose(fichero);
+	return ficheroString;
+}
+
+int cantidadLineasFichero() {
+	FILE* fichero;
+	if (fopen_s(&fichero, "../contadores.txt", "r") != 0) {
+		printf("[ERROR] No se pudo abrir el fichero para leer datos.\n");
+		return -1;
+	}
+
+	char buffer[100];
+	int lineas = 0;
+	while (fgets(buffer, 100, fichero) != NULL) {
+		lineas++;
+	}
+
+	fclose(fichero);
+	return lineas;
+}
+
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
 	ALLEGRO_BITMAP* pacmanL = al_load_bitmap("../imagenes/sprites/pacman-l.png");
@@ -257,6 +321,7 @@ int jugar() {
 	int posTab = 0;
 	int puntos = 0;
 	char orientacion = 'R';
+	string horaActual = obtenerHoraActual();
 
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
@@ -374,6 +439,11 @@ int jugar() {
 				break;
 			case ALLEGRO_KEY_ESCAPE:
 				printf("[MAIN] Saliendo del juego...\n");
+				guardarFichero(horaActual, puntos);
+				al_destroy_bitmap(pacmanR);
+				al_destroy_bitmap(pacmanL);
+				al_destroy_display(display); // Liberar recursos al salir
+				al_destroy_event_queue(event_queue);
 				flag = false;
 				break;
 			default:
@@ -390,13 +460,63 @@ int jugar() {
 		int valTablero = tablero[i][j];
 		
 		al_flip_display(); // Actualizar la pantalla
-
 		//posX += mov * velocidad * deltaTime;
 		//double deltaTime = al_get_timer_count(fps);
 	}
-	al_destroy_bitmap(pacmanR);
-	al_destroy_bitmap(pacmanL);
-	al_destroy_display(display); // Liberar recursos al salir
+	return 1;
+}
+
+int contadores() {
+	ALLEGRO_COLOR colorPastilla = al_map_rgb(255, 255, 255); // Blanco
+	font = al_create_builtin_font();
+
+	printf("[INFO] Iniciando contadores...\n");
+	int lineas = cantidadLineasFichero();
+	printf("[INFO] Cantidad de líneas: %d\n", lineas);
+	// Dimensiones de la ventana
+	int ventanaAncho = 1024;
+	int ventanaAlto = 768;
+
+	// Dimensiones del tablero
+	int tableroAncho = 900;
+	int tableroAlto = 600;
+
+	// Calcular las coordenadas iniciales para centrar el tablero
+	int inicioX = (ventanaAncho - tableroAncho) / 2; // 62
+	int inicioY = (ventanaAlto - tableroAlto) / 2; // 84
+
+	int dentroRectX = inicioX + 30; // contando grosor
+	int dentroRectY = inicioY + 30;
+
+	bool flag = true;
+	string fich = leerFichero();
+	printf("[INFO] Fichero: \n%s", fich.c_str());
+
+	while (true) {
+		ALLEGRO_EVENT Evento;
+		al_wait_for_event(event_queue, &Evento);
+		if (!event_queue) {
+			printf("[ERROR] No se pudo crear la cola de eventos.\n");
+			return -1;
+		}
+
+		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
+		al_draw_filled_rectangle(inicioX, inicioY, inicioX + 900, inicioY + 10, colorPastilla);
+		al_draw_filled_rectangle(inicioX, inicioY + 30, inicioX + 900, inicioY + 33, colorPastilla);
+		al_draw_filled_rectangle(inicioX, inicioY, inicioX + 10, inicioY + 30, colorPastilla);
+		al_draw_filled_rectangle(inicioX + 890, inicioY + 10, inicioX + 900, inicioY + 30, colorPastilla);
+
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 450, 50, ALLEGRO_ALIGN_CENTER, "%s", "[CONTADORES]");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Partida");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 450, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Puntos");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 750, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Estado");
+
+
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18 + (25), ALLEGRO_ALIGN_CENTER, "%s", fich.c_str());
+		//j++;
+
+		al_flip_display();
+	}
 	al_destroy_event_queue(event_queue);
 	return 1;
 }
@@ -459,7 +579,7 @@ int menu() {
 			}
 			else if (botonContadores) { 
 				botones = 2; 
-				if (Evento.mouse.button & 1) return 1;
+				if (Evento.mouse.button & 1) contadores();
 			}
 			else if (botonSalir) { 
 				botones = 3; 
