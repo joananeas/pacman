@@ -12,6 +12,9 @@
 #include <Windows.h>
 #include <conio.h>
 #include <vector>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+
 
 using namespace std;
 
@@ -21,6 +24,8 @@ ALLEGRO_TIMER* segundoTimer = NULL;
 ALLEGRO_TIMER* fps = NULL;
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 ALLEGRO_FONT* font = NULL;
+ALLEGRO_SAMPLE* sonidoComeCereza = nullptr;
+
 
 int menu();
 int ancho = 1024;
@@ -36,6 +41,21 @@ static void finalizar_allegro() {
 
 	// Otros códigos de limpieza pueden ir aquí
 }
+
+//void reproducirSonido() {
+//	if (!PlaySound(L"path/to/sound.wav", NULL, SND_ASYNC | SND_FILENAME)) {
+		// Error al reproducir el sonido
+//		DWORD error = GetLastError();
+//		std::cerr << "Error al reproducir el sonido. Código de error: " << error << std::endl;
+//	}
+//}
+
+
+//void reproducirSonido() {
+	// Reproducir el sonido utilizando PlaySound (ajusta la ruta según tu caso)
+	//PlaySound(L"C:\Users\Husnain\source\repos\pacman\Sonidos-Pacman\pacman-come-cereza.mp3", NULL, SND_ASYNC | SND_FILENAME);
+//}
+
 
 
 int main() {
@@ -303,6 +323,9 @@ int cantidadLineasFichero() {
 	return lineas;
 }
 
+
+
+
 int jugar() {
 	ALLEGRO_DISPLAY* display = al_create_display(1024, 768);
 	ALLEGRO_BITMAP* pacmanL = al_load_bitmap("../imagenes/sprites/pacman-l.png");
@@ -371,6 +394,14 @@ int jugar() {
 
 		float velocidad = 2.0;
 
+		sonidoComeCereza = al_load_sample("C:/Users/Husnain/source/repos/pacman/Sonidos-Pacman/pacman-come-cereza.mp3");
+		if (!sonidoComeCereza) {
+			printf("[ERROR] No se pudo cargar el archivo de sonido.\n");
+			return -1;
+		}
+
+
+
 		switch (Evento.type) {
 			printf("[INFO] Tipo de evento: %d", Evento.type);
 		case ALLEGRO_EVENT_KEY_DOWN:
@@ -387,6 +418,14 @@ int jugar() {
 					else if (posTab == 5) puntos += 500;
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 					printf("[INFO] Moviendo hacia la izquierda.\n");
+
+					//PlaySound("pacman-come-cereza.mp3", NULL, SND_FILENAME | SND_ASYNC);
+
+					//reproducirSonido();
+
+					//PlaySound(L"pacman\Sonidos-Pacman\pacman-come-cereza.mp3", NULL, SND_FILENAME | SND_ASYNC);
+
+
 				}
 				tecla = "arriba";
 				break;
@@ -420,6 +459,9 @@ int jugar() {
 					printf("[INFO] Moviendo hacia arriba.\n");
 				}
 				tecla = "izquierda";
+
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+
 				break;
 			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
@@ -462,9 +504,13 @@ int jugar() {
 		al_flip_display(); // Actualizar la pantalla
 		//posX += mov * velocidad * deltaTime;
 		//double deltaTime = al_get_timer_count(fps);
+
 	}
+	al_destroy_sample(sonidoComeCereza);
 	return 1;
+
 }
+
 
 int contadores() {
 	ALLEGRO_COLOR colorPastilla = al_map_rgb(255, 255, 255); // Blanco
@@ -472,7 +518,7 @@ int contadores() {
 
 	printf("[INFO] Iniciando contadores...\n");
 	int lineas = cantidadLineasFichero();
-	printf("[INFO] Cantidad de líneas: %d\n", lineas);
+	printf("[INFO] Cantidad de lineas: \n %d \n", lineas);
 	// Dimensiones de la ventana
 	int ventanaAncho = 1024;
 	int ventanaAlto = 768;
@@ -490,7 +536,7 @@ int contadores() {
 
 	bool flag = true;
 	string fich = leerFichero();
-	printf("[INFO] Fichero: \n%s", fich.c_str());
+	printf("[INFO] Fichero: \n%s\n", fich.c_str());
 
 	while (true) {
 		ALLEGRO_EVENT Evento;
@@ -506,13 +552,20 @@ int contadores() {
 		al_draw_filled_rectangle(inicioX, inicioY, inicioX + 10, inicioY + 30, colorPastilla);
 		al_draw_filled_rectangle(inicioX + 890, inicioY + 10, inicioX + 900, inicioY + 30, colorPastilla);
 
+		// ...
+
 		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 450, 50, ALLEGRO_ALIGN_CENTER, "%s", "[CONTADORES]");
-		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Partida");
-		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 450, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Puntos");
-		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 750, inicioY + 18, ALLEGRO_ALIGN_CENTER, "%s", "Estado");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18, ALLEGRO_ALIGN_CENTER, "Partida");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 450, inicioY + 18, ALLEGRO_ALIGN_CENTER, "Puntos");
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 750, inicioY + 18, ALLEGRO_ALIGN_CENTER, "Estado");
+
+		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 260, inicioY + 18 + (25), ALLEGRO_ALIGN_CENTER, "%s", fich.c_str());
+
+		// ...
 
 
-		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18 + (25), ALLEGRO_ALIGN_CENTER, "%s", fich.c_str());
+
+		// 		al_draw_textf(font, al_map_rgb(255, 255, 255), inicioX + 150, inicioY + 18 + (25), ALLEGRO_ALIGN_CENTER, "%s", fich.c_str());
 		//j++;
 
 		al_flip_display();
