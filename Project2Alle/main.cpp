@@ -399,7 +399,7 @@ int jugar() {
 			printf("[ERROR] No se pudo cargar el archivo de sonido.\n");
 			return -1;
 		}
-		//
+		
 
 
 
@@ -444,6 +444,9 @@ int jugar() {
 					printf("[INFO] Moviendo hacia la derecha.\n");
 				}
 				tecla = "abajo";
+
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+
 				break;
 			case ALLEGRO_KEY_A:
 			case ALLEGRO_KEY_LEFT:
@@ -479,6 +482,9 @@ int jugar() {
 					printf("[INFO] Moviendo hacia abajo.\n");
 				}
 				tecla = "derecha";
+
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+
 				break;
 			case ALLEGRO_KEY_ESCAPE:
 				printf("[MAIN] Saliendo del juego...\n");
@@ -488,6 +494,9 @@ int jugar() {
 				al_destroy_display(display); // Liberar recursos al salir
 				al_destroy_event_queue(event_queue);
 				flag = false;
+
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+
 				break;
 			default:
 				break;
