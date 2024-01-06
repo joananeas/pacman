@@ -399,6 +399,7 @@ int jugar() {
 			printf("[ERROR] No se pudo cargar el archivo de sonido.\n");
 			return -1;
 		}
+		//
 
 
 
