@@ -21,11 +21,12 @@ ALLEGRO_TIMER* segundoTimer = NULL;
 ALLEGRO_TIMER* fps = NULL;
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 ALLEGRO_FONT* font = NULL;
+ALLEGRO_TIMER* timerPowerUp = NULL;
 
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.2.2"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.2.3"; // Tiene que ser const char* para que funcione con al_draw_text
 
 static void finalizar_allegro() {
 	// Destruir el temporizador
@@ -64,26 +65,31 @@ int main() {
 
 	segundoTimer = al_create_timer(1.0);
 	fps = al_create_timer(1.0 / 60);
+	timerPowerUp = al_create_timer(1.0);
 
 	event_queue = al_create_event_queue();
 
 	al_register_event_source(event_queue, al_get_timer_event_source(fps));
 	al_register_event_source(event_queue, al_get_timer_event_source(segundoTimer));
+	al_register_event_source(event_queue, al_get_timer_event_source(timerPowerUp));
 	al_register_event_source(event_queue, al_get_mouse_event_source());
 	
 	bool kboard = al_is_keyboard_installed();
 	printf("[INFO] Estado del teclado: %d\n", kboard);
 
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
-
+	
+	al_start_timer(timerPowerUp);
 	al_start_timer(fps);
 	al_start_timer(segundoTimer);
+	
 
 	menu(); 
 
 	al_destroy_display(ventana);
 	al_destroy_timer(segundoTimer);
 	al_destroy_timer(fps);
+	al_destroy_timer(timerPowerUp);
 	al_destroy_event_queue(event_queue);
 	al_destroy_font(hello_honey);
 
@@ -311,13 +317,24 @@ int jugar() {
 	ALLEGRO_BITMAP* cherryR = al_load_bitmap("../imagenes/sprites/cherry-r.png");
 	ALLEGRO_BITMAP* blinkyL = al_load_bitmap("../imagenes/sprites/blinky-l.png");
 	ALLEGRO_BITMAP* blinkyR = al_load_bitmap("../imagenes/sprites/blinky-r.png");
+	ALLEGRO_BITMAP* ghost = al_load_bitmap("../imagenes/sprites/ghost.png");
+	ALLEGRO_BITMAP* ghostW = al_load_bitmap("../imagenes/sprites/ghost-w.png");
 	ALLEGRO_FONT* font = al_create_builtin_font();
+
 	int direccionActual = 0; // 0: Sin movimiento, 1: Arriba, 2: Abajo, 3: Izquierda, 4: Derecha
+	int contador = 0;
 	const char* tecla = "ninguna";
 	float posX = 500;
 	float posY = 490;
+
+	float posCherryX = 440;
+	float posCherryY = 360;
+	float posBlinkyX = 560;
+	float posBlinkyY = 360;
+
 	int i = 7, j = 7;
 	bool flag = true;
+	bool powerUp = false;
 	int posTab = 0;
 	int puntos = 0;
 	char orientacion = 'R';
@@ -347,6 +364,7 @@ int jugar() {
 	
 	printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 	printf("[MAIN] iniciando el juego...\n");
+	
 
 	while (flag) {
 		ALLEGRO_EVENT Evento;
@@ -363,13 +381,32 @@ int jugar() {
 		if(orientacion == 'L') al_draw_bitmap(pacmanL, posX, posY, 0);
 		else al_draw_bitmap(pacmanR, posX, posY, 0);
 
-		al_draw_bitmap(cherryL, 440, 360, 0);
-		al_draw_bitmap(blinkyR, 560, 360, 0);
+		if (powerUp == true && contador < 11) {
+			if (contador % 2 == 0) {
+				al_draw_bitmap(ghostW, posCherryX, posCherryY, 0);
+				al_draw_bitmap(ghostW, posBlinkyX, posBlinkyY, 0);
+			}
+			else {
+				al_draw_bitmap(ghost, posCherryX, posCherryY, 0);
+				al_draw_bitmap(ghost, posBlinkyX, posBlinkyY, 0);
+			}
+		}
+		else {
+			powerUp = false;
+			al_draw_bitmap(cherryL, posCherryX, posCherryY, 0);
+			al_draw_bitmap(blinkyR, posBlinkyX, posBlinkyY, 0);
+		}
 
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
 		al_draw_text(font, al_map_rgb(255, 255, 255), 600, 700, ALLEGRO_ALIGN_CENTER, tecla);
 
-		float velocidad = 2.0;
+		if (Evento.type == ALLEGRO_EVENT_TIMER) {
+			//printf("[INFO] Evento timer");
+			if (Evento.timer.source == timerPowerUp) {
+				contador++; // Incrementar el contador en cada pulsación del temporizador
+				printf("[INFO] Contador: %d\n", contador);
+			}
+		}
 
 		switch (Evento.type) {
 			printf("[INFO] Tipo de evento: %d", Evento.type);
@@ -384,7 +421,11 @@ int jugar() {
 					posY -= 60;
 					i--;
 					if (posTab == 4) puntos += 100;
-					else if (posTab == 5) puntos += 500;
+					else if (posTab == 5) { 
+						puntos += 500;
+						powerUp = true;
+						contador = 0;
+					};
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 					printf("[INFO] Moviendo hacia la izquierda.\n");
 				}
@@ -399,7 +440,11 @@ int jugar() {
 					posY += 60;
 					i++;
 					if (posTab == 4) puntos += 100;
-					else if (posTab == 5) puntos += 500;
+					else if (posTab == 5) {
+						puntos += 500;
+						powerUp = true;
+						contador = 0;
+					};
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 					printf("[INFO] Moviendo hacia la derecha.\n");
 				}
@@ -415,7 +460,11 @@ int jugar() {
 					posX -= 60;
 					j--;
 					if (posTab == 4) puntos += 100;
-					else if (posTab == 5) puntos += 500;
+					else if (posTab == 5) {
+						puntos += 500;
+						powerUp = true;
+						contador = 0;
+					};
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 					printf("[INFO] Moviendo hacia arriba.\n");
 				}
@@ -425,13 +474,17 @@ int jugar() {
 			case ALLEGRO_KEY_RIGHT:
 				printf("[MAIN] Derecha\n");
 				if (tablero[i][j + 1] == 0 || tablero[i][j + 1] == 4 || tablero[i][j + 1] == 5) {
-					posTab = tablero[i][j - 1];
+					posTab = tablero[i][j + 1];
 					tablero[i][j + 1] = 0;
 					orientacion = 'R';
 					posX += 60;
 					j++;
 					if(posTab == 4) puntos += 100;
-					else if (posTab == 5) puntos += 500;
+					else if (posTab == 5) {
+						puntos += 500;
+						powerUp = true;
+						contador = 0;
+					};
 					printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 					printf("[INFO] Moviendo hacia abajo.\n");
 				}
