@@ -24,7 +24,7 @@ ALLEGRO_TIMER* segundoTimer = NULL;
 ALLEGRO_TIMER* fps = NULL;
 ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 ALLEGRO_FONT* font = NULL;
-ALLEGRO_SAMPLE* sonidoComeCereza = nullptr;
+ALLEGRO_SAMPLE* sonidoComeCereza = nullptr; //Sonido
 
 
 int menu();
@@ -371,6 +371,12 @@ int jugar() {
 	printf("[INFO] Tablero[%d][%d] = %d\n", i, j, tablero[i][j]);
 	printf("[MAIN] iniciando el juego...\n");
 
+	sonidoComeCereza = al_load_sample("C:/Users/Husnain/source/repos/pacman/Sonidos-Pacman/pacman-come-cereza.wav"); //Sonido
+	if (!sonidoComeCereza) {
+		printf("[ERROR] No se pudo cargar el archivo de sonido.\n");
+		return -1;
+	}
+
 	while (flag) {
 		ALLEGRO_EVENT Evento;
 		al_wait_for_event(event_queue, &Evento);
@@ -394,21 +400,13 @@ int jugar() {
 
 		float velocidad = 2.0;
 
-		sonidoComeCereza = al_load_sample("C:/Users/Husnain/source/repos/pacman/Sonidos-Pacman/pacman-come-cereza.mp3");
-		if (!sonidoComeCereza) {
-			printf("[ERROR] No se pudo cargar el archivo de sonido.\n");
-			return -1;
-		}
-		
-
-
-
 		switch (Evento.type) {
 			printf("[INFO] Tipo de evento: %d", Evento.type);
 		case ALLEGRO_EVENT_KEY_DOWN:
 			switch (Evento.keyboard.keycode) {
 			case ALLEGRO_KEY_W:
 			case ALLEGRO_KEY_UP:
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr); //Sonido
 				printf("[MAIN] Arriba\n");
 				if (tablero[i - 1][j] == 0 || tablero[i - 1][j] == 4 || tablero[i - 1][j] == 5) {			
 					posTab = tablero[i - 1][j];
@@ -432,6 +430,9 @@ int jugar() {
 				break;
 			case ALLEGRO_KEY_S:
 			case ALLEGRO_KEY_DOWN:
+
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr); //Sonido
+
 				printf("[MAIN] Abajo\n");
 				if (tablero[i + 1][j] == 0 || tablero[i + 1][j] == 4 || tablero[i + 1][j] == 5) {
 					posTab = tablero[i + 1][j];
@@ -445,11 +446,11 @@ int jugar() {
 				}
 				tecla = "abajo";
 
-				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
 
 				break;
 			case ALLEGRO_KEY_A:
 			case ALLEGRO_KEY_LEFT:
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr); //Sonido
 				printf("[MAIN] Izquierda\n");
 				if (tablero[i][j - 1] == 0 || tablero[i][j - 1] == 4 || tablero[i][j - 1] == 5) {
 					posTab = tablero[i][j - 1];
@@ -464,11 +465,12 @@ int jugar() {
 				}
 				tecla = "izquierda";
 
-				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+				
 
 				break;
 			case ALLEGRO_KEY_D:
 			case ALLEGRO_KEY_RIGHT:
+				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr); //Sonido
 				printf("[MAIN] Derecha\n");
 				if (tablero[i][j + 1] == 0 || tablero[i][j + 1] == 4 || tablero[i][j + 1] == 5) {
 					posTab = tablero[i][j - 1];
@@ -483,7 +485,7 @@ int jugar() {
 				}
 				tecla = "derecha";
 
-				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+				
 
 				break;
 			case ALLEGRO_KEY_ESCAPE:
@@ -495,7 +497,6 @@ int jugar() {
 				al_destroy_event_queue(event_queue);
 				flag = false;
 
-				al_play_sample(sonidoComeCereza, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
 
 				break;
 			default:
@@ -516,7 +517,7 @@ int jugar() {
 		//double deltaTime = al_get_timer_count(fps);
 
 	}
-	al_destroy_sample(sonidoComeCereza);
+	al_destroy_sample(sonidoComeCereza); //Sonido
 	return 1;
 
 }
