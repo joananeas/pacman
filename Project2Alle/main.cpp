@@ -1,4 +1,4 @@
-// Hecho por: Husnain Arsha, Ivan Aguilar y Joan Aneas :)
+// Joan Aneas 2024
 
 #include <iostream>
 #include <string>
@@ -11,7 +11,7 @@
 #include <allegro5/allegro_image.h>
 #include <Windows.h>
 #include <conio.h>
-#include <vector>
+#include "header.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ ALLEGRO_TIMER* timerPowerUp = NULL;
 int menu();
 int ancho = 1024;
 int alto = 768;
-const char* version = "v0.2.3"; // Tiene que ser const char* para que funcione con al_draw_text
+const char* version = "v0.2.4"; // Tiene que ser const char* para que funcione con al_draw_text
 
 static void finalizar_allegro() {
 	// Destruir el temporizador
@@ -340,9 +340,17 @@ int jugar() {
 	char orientacion = 'R';
 	string horaActual = obtenerHoraActual();
 
+	pacman comecocos(3, puntos, false, posX, posY); // Inicializamos que no está comido y que está en casa
+	fantasma blinky(1, 560, 360, false, true); // Inicializamos que no está comido y que está en casa
+	fantasma cherry(1, 440, 360, false, true); // Inicializamos que no está comido y que está en casa
+
 	// 1 es una pared, 0 es un pasillo
 	// 2 es pacman, 3 es un fantasma
 	// 4 son las pastillas, 5 es la fruta
+	// 6 es que los fantasmas estan encima
+	// 7 es blinky
+	// 8 es cherry
+
 	int tablero[11][15] = {
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, // 0
 		{1,5,4,4,4,4,4,4,4,4,4,4,4,5,1}, // 1
@@ -373,28 +381,38 @@ int jugar() {
 			printf("[ERROR] No se pudo crear la cola de eventos.\n");
 			return -1;
 		}
-
+		/*-----------------------------*/
+		// Inicialización
+			blinky.setPosX(posBlinkyX);
+			blinky.setPosY(posBlinkyY);
+			cherry.setPosX(posCherryX);
+			cherry.setPosY(posCherryY);
+		/*-----------------------------*/
 		al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpia la pantalla a negro
 		// Dibujar el tablero al estilo de Pac-Man
-		dibujar_tablero(tablero, puntos);
+		dibujar_tablero(tablero, comecocos.getPuntos());
+		
 
-		if(orientacion == 'L') al_draw_bitmap(pacmanL, posX, posY, 0);
-		else al_draw_bitmap(pacmanR, posX, posY, 0);
+		if(orientacion == 'L') al_draw_bitmap(pacmanL, comecocos.getPosX(), comecocos.getPosY(), 0);
+		else al_draw_bitmap(pacmanR, comecocos.getPosX(), comecocos.getPosY(), 0);
+
+		blinky.trayectoria(1, tablero, posBlinkyX, posBlinkyY);
+		cherry.trayectoria(2, tablero, posCherryX, posCherryY);
 
 		if (powerUp == true && contador < 11) {
 			if (contador % 2 == 0) {
-				al_draw_bitmap(ghostW, posCherryX, posCherryY, 0);
-				al_draw_bitmap(ghostW, posBlinkyX, posBlinkyY, 0);
+				al_draw_bitmap(ghostW, cherry.getPosX(), cherry.getPosY(), 0);
+				al_draw_bitmap(ghostW, blinky.getPosX(), blinky.getPosY(), 0);
 			}
 			else {
-				al_draw_bitmap(ghost, posCherryX, posCherryY, 0);
-				al_draw_bitmap(ghost, posBlinkyX, posBlinkyY, 0);
+				al_draw_bitmap(ghost, cherry.getPosX(), cherry.getPosY(), 0);
+				al_draw_bitmap(ghost, blinky.getPosX(), blinky.getPosY(), 0);
 			}
 		}
 		else {
 			powerUp = false;
-			al_draw_bitmap(cherryL, posCherryX, posCherryY, 0);
-			al_draw_bitmap(blinkyR, posBlinkyX, posBlinkyY, 0);
+			al_draw_bitmap(cherryL, cherry.getPosX(), cherry.getPosY(), 0);
+			al_draw_bitmap(blinkyR, blinky.getPosX(), blinky.getPosY(), 0);
 		}
 
 		al_draw_text(font, al_map_rgb(255, 255, 255), 500, 700, ALLEGRO_ALIGN_CENTER, "Tecla presionada: ");
@@ -419,10 +437,11 @@ int jugar() {
 					posTab = tablero[i - 1][j];
 					tablero[i - 1][j] = 0;
 					posY -= 60;
+					comecocos.setPosY(posY);
 					i--;
-					if (posTab == 4) puntos += 100;
+					if (posTab == 4) comecocos.setPuntos(100);
 					else if (posTab == 5) { 
-						puntos += 500;
+						comecocos.setPuntos(500);
 						powerUp = true;
 						contador = 0;
 					};
@@ -438,10 +457,11 @@ int jugar() {
 					posTab = tablero[i + 1][j];
 					tablero[i + 1][j] = 0;
 					posY += 60;
+					comecocos.setPosY(posY);
 					i++;
-					if (posTab == 4) puntos += 100;
+					if (posTab == 4) comecocos.setPuntos(100);
 					else if (posTab == 5) {
-						puntos += 500;
+						comecocos.setPuntos(500);
 						powerUp = true;
 						contador = 0;
 					};
@@ -458,10 +478,11 @@ int jugar() {
 					tablero[i][j - 1] = 0;
 					orientacion = 'L';
 					posX -= 60;
+					comecocos.setPosX(posX);
 					j--;
-					if (posTab == 4) puntos += 100;
+					if (posTab == 4) comecocos.setPuntos(100);
 					else if (posTab == 5) {
-						puntos += 500;
+						comecocos.setPuntos(500);
 						powerUp = true;
 						contador = 0;
 					};
@@ -478,10 +499,11 @@ int jugar() {
 					tablero[i][j + 1] = 0;
 					orientacion = 'R';
 					posX += 60;
+					comecocos.setPosX(posX);
 					j++;
-					if(posTab == 4) puntos += 100;
+					if (posTab == 4) comecocos.setPuntos(100);
 					else if (posTab == 5) {
-						puntos += 500;
+						comecocos.setPuntos(500);
 						powerUp = true;
 						contador = 0;
 					};
